@@ -54,7 +54,7 @@ import dataset.section_parser as sp
 # import Dataset.section_parser as sp
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+spacy.require_gpu()
 # to log certain statistics during dataset creation
 txt_file_for_logging = "log_file_dataset_creation.txt"
 
