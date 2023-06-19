@@ -9,7 +9,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+chest-imagenome/
 # Distribution / packaging
 .Python
 build/
