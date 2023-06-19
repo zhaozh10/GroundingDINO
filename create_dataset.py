@@ -294,7 +294,7 @@ def get_reference_report(subject_id: str, study_id: str, missing_reports: list[s
     if f"s{study_id}" in custom_section_names or f"s{study_id}" in custom_indices:
         return -1  # skip all reports without "findings" sections
 
-    path_to_report = os.path.join(path_mimic_cxr, "files", f"p{subject_id[:2]}", f"p{subject_id}", f"s{study_id}.txt")
+    path_to_report = os.path.join(path_mimic_cxr_jpg, "files", f"p{subject_id[:2]}", f"p{subject_id}", f"s{study_id}.txt")
 
     if not os.path.exists(path_to_report):
         shortened_path_to_report = os.path.join(f"p{subject_id[:2]}", f"p{subject_id}", f"s{study_id}.txt")
