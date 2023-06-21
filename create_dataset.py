@@ -50,14 +50,12 @@ import torch
 from tqdm import tqdm
 from dataset.config import ANATOMICAL_REGIONS, IMAGE_IDS_TO_IGNORE, SUBSTRINGS_TO_REMOVE, path_chest_imagenome, path_mimic_cxr_jpg, path_full_dataset
 import dataset.section_parser as sp
-# from Dataset.config import ANATOMICAL_REGIONS, IMAGE_IDS_TO_IGNORE, SUBSTRINGS_TO_REMOVE, path_chest_imagenome, path_mimic_cxr_jpg, path_full_dataset
-# import Dataset.section_parser as sp
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 spacy.require_gpu()
 # to log certain statistics during dataset creation
-txt_file_for_logging = "log_file_dataset_creation.txt"
-
+txt_file_for_logging = "./datatset/log_file_dataset_creation.txt"
+# cxr_wh=json.load(open('../data/mimic-cxr-reports/cxr_wh.json'))
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s]: %(message)s")
 log = logging.getLogger(__name__)
 
@@ -403,9 +401,9 @@ def get_rows(dataset: str, path_csv_file: str, image_ids_to_avoid: set) -> list[
             image_file_path = row[4].replace(".dcm", ".jpg")
             mimic_image_file_path = os.path.join(path_mimic_cxr_jpg, image_file_path)
 
-            if not os.path.exists(mimic_image_file_path):
-                missing_images.append(mimic_image_file_path)
-                continue
+            # if not os.path.exists(mimic_image_file_path):
+            #     missing_images.append(mimic_image_file_path)
+            #     continue
 
             # for the validation and test sets, we only want to include images that have corresponding reference reports with "findings" sections
             if dataset in ["valid", "test"]:
@@ -442,6 +440,7 @@ def get_rows(dataset: str, path_csv_file: str, image_ids_to_avoid: set) -> list[
             bbox_is_abnormal_vars = []
 
             width, height = imagesize.get(mimic_image_file_path)
+            # width, height=cxr_wh[image_file_path]['width'],cxr_wh[image_file_path]['height']
 
             # counter to see if given image contains bbox coordinates for all 29 regions
             # if image does not bbox coordinates for 29 regions, it's still added to the train and test dataset,
