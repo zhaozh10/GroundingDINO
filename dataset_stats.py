@@ -8,7 +8,7 @@ from tqdm import tqdm
 from dataset.config import ANATOMICAL_REGIONS, IMAGE_IDS_TO_IGNORE, path_chest_imagenome
 
 
-txt_file_to_log_stats = "./dataset_stats.txt"
+txt_file_to_log_stats = "./dataset/dataset_stats.txt"
 
 
 def print_stats_counter_dicts(counter_dict):
