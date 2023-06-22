@@ -5,13 +5,13 @@ from albumentations.pytorch import ToTensorV2
 import os
 import pandas as pd
 import logging
-from dataset.config import path_full_dataset
+# from dataset.config import path_full_dataset
+from datasets import Dataset
 
 
-
-PERCENTAGE_OF_TRAIN_SET_TO_USE = 1.0
+PERCENTAGE_OF_TRAIN = 1.0
 # PERCENTAGE_OF_VAL_SET_TO_USE = 0.2
-PERCENTAGE_OF_VAL_SET_TO_USE = 1.0
+PERCENTAGE_OF_VAL= 1.0
 
 
 
@@ -62,7 +62,7 @@ def get_transforms(dataset: str):
         return val_test_transforms
 
 
-def get_datasets_as_df(config_file_path):
+def get_datasets_as_df(path_full_dataset):
     usecols = ["mimic_image_file_path", "bbox_coordinates", "bbox_labels"]
 
     # since bbox_coordinates and bbox_labels are stored as strings in the csv_file, we have to apply
@@ -76,20 +76,100 @@ def get_datasets_as_df(config_file_path):
     total_num_samples_val = len(datasets_as_df["valid"])
 
     # compute new number of samples for both train and val
-    new_num_samples_train = int(PERCENTAGE_OF_TRAIN_SET_TO_USE * total_num_samples_train)
-    new_num_samples_val = int(PERCENTAGE_OF_VAL_SET_TO_USE * total_num_samples_val)
+    new_num_samples_train = int(PERCENTAGE_OF_TRAIN * total_num_samples_train)
+    new_num_samples_val = int(PERCENTAGE_OF_VAL * total_num_samples_val)
 
     # log.info(f"Train: {new_num_samples_train} images")
     # log.info(f"Val: {new_num_samples_val} images")
 
-    with open(config_file_path, "a") as f:
-        f.write(f"\tTRAIN NUM IMAGES: {new_num_samples_train}\n")
-        f.write(f"\tVAL NUM IMAGES: {new_num_samples_val}\n")
+    # with open(config_file_path, "a") as f:
+    #     f.write(f"\tTRAIN NUM IMAGES: {new_num_samples_train}\n")
+    #     f.write(f"\tVAL NUM IMAGES: {new_num_samples_val}\n")
 
     # limit the datasets to those new numbers
     datasets_as_df["train"] = datasets_as_df["train"][:new_num_samples_train]
     datasets_as_df["valid"] = datasets_as_df["valid"][:new_num_samples_val]
 
     return datasets_as_df
+
+def get_datasets(path_full_dataset):
+    usecols = [
+        "mimic_image_file_path",
+        "bbox_coordinates",
+        "bbox_labels",
+        "bbox_phrases",
+        "bbox_phrase_exists",
+        "bbox_is_abnormal",
+    ]
+
+    # all of the columns below are stored as strings in the csv_file
+    # however, as they are actually lists, we apply the literal_eval func to convert them to lists
+    converters = {
+        "bbox_coordinates": literal_eval,
+        "bbox_labels": literal_eval,
+        "bbox_phrases": literal_eval,
+        "bbox_phrase_exists": literal_eval,
+        "bbox_is_abnormal": literal_eval,
+    }
+
+    datasets_as_dfs = {}
+    datasets_as_dfs["train"] = pd.read_csv(os.path.join(path_full_dataset, "train.csv"), usecols=usecols, converters=converters)
+
+    # val dataset has additional "reference_report" column
+    usecols.append("reference_report")
+    datasets_as_dfs["valid"] = pd.read_csv(os.path.join(path_full_dataset, "valid.csv"), usecols=usecols, converters=converters)
+
+    total_num_samples_train = len(datasets_as_dfs["train"])
+    total_num_samples_val = len(datasets_as_dfs["valid"])
+
+    # compute new number of samples for both train and val
+    new_num_samples_train = int(PERCENTAGE_OF_TRAIN * total_num_samples_train)
+    new_num_samples_val = int(PERCENTAGE_OF_VAL * total_num_samples_val)
+
+    # log.info(f"Train: {new_num_samples_train} images")
+    # log.info(f"Val: {new_num_samples_val} images")
+
+    # with open(config_file_path, "a") as f:
+    #     f.write(f"\tTRAIN NUM IMAGES: {new_num_samples_train}\n")
+    #     f.write(f"\tVAL NUM IMAGES: {new_num_samples_val}\n")
+
+    # limit the datasets to those new numbers
+    datasets_as_dfs["train"] = datasets_as_dfs["train"][:new_num_samples_train]
+    datasets_as_dfs["valid"] = datasets_as_dfs["valid"][:new_num_samples_val]
+
+    raw_train_dataset = Dataset.from_pandas(datasets_as_dfs["train"])
+    raw_val_dataset = Dataset.from_pandas(datasets_as_dfs["valid"])
+
+    return raw_train_dataset, raw_val_dataset
+
+def get_testset(path_full_dataset):
+    usecols = [
+        "mimic_image_file_path",
+        "bbox_coordinates",
+        "bbox_labels",
+        "bbox_phrases",
+        "bbox_phrase_exists",
+        "bbox_is_abnormal",
+        "reference_report"
+    ]
+
+    # all of the columns below are stored as strings in the csv_file
+    # however, as they are actually lists, we apply the literal_eval func to convert them to lists
+    converters = {
+        "bbox_coordinates": literal_eval,
+        "bbox_labels": literal_eval,
+        "bbox_phrases": literal_eval,
+        "bbox_phrase_exists": literal_eval,
+        "bbox_is_abnormal": literal_eval,
+    }
+
+    datasets_as_dfs = {}
+    datasets_as_dfs["test"] = pd.read_csv(os.path.join(path_full_dataset, "test.csv"), usecols=usecols, converters=converters)
+    datasets_as_dfs["test-2"] = pd.read_csv(os.path.join(path_full_dataset, "test-2.csv"), usecols=usecols, converters=converters)
+
+    raw_test_dataset = Dataset.from_pandas(datasets_as_dfs["test"])
+    raw_test_2_dataset = Dataset.from_pandas(datasets_as_dfs["test-2"])
+
+    return raw_test_dataset, raw_test_2_dataset
 
 

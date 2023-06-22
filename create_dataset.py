@@ -55,7 +55,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 spacy.require_gpu()
 # to log certain statistics during dataset creation
 txt_file_for_logging = "./datatset/log_file_dataset_creation.txt"
-# cxr_wh=json.load(open('../data/mimic-cxr-reports/cxr_wh.json'))
+cxr_wh=json.load(open('../data/mimic-cxr-reports/cxr_wh.json'))
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s]: %(message)s")
 log = logging.getLogger(__name__)
 
@@ -432,7 +432,8 @@ def get_rows(dataset: str, path_csv_file: str, image_ids_to_avoid: set) -> list[
             anatomical_region_attributes = get_attributes_dict(image_scene_graph, sentence_tokenizer)
 
             # new_image_row will store all information about 1 image as a row in the csv file
-            new_image_row = [subject_id, study_id, image_id, mimic_image_file_path]
+            # new_image_row = [subject_id, study_id, image_id, mimic_image_file_path]
+            new_image_row = [subject_id, study_id, image_id, image_file_path]
             bbox_coordinates = []
             bbox_labels = []
             bbox_phrases = []
@@ -519,7 +520,7 @@ def get_rows(dataset: str, path_csv_file: str, image_ids_to_avoid: set) -> list[
             if NUM_ROWS_TO_CREATE_IN_NEW_CSV_FILES and num_rows_created >= NUM_ROWS_TO_CREATE_IN_NEW_CSV_FILES:
                 break
 
-    write_stats_to_log_file(dataset, num_images_ignored_or_avoided, missing_images, missing_reports, num_faulty_bboxes, num_images_without_29_regions)
+    # write_stats_to_log_file(dataset, num_images_ignored_or_avoided, missing_images, missing_reports, num_faulty_bboxes, num_images_without_29_regions)
 
     if dataset == "test":
         return csv_rows, csv_rows_less_than_29_regions
@@ -576,12 +577,13 @@ def get_train_val_test_csv_files():
 
 
 def main():
+    image_ids_to_avoid = get_images_to_avoid()
     csv_files_dict = get_train_val_test_csv_files()
 
     # the "splits" directory of chest-imagenome contains a csv file called "images_to_avoid.csv",
     # which contains image IDs for images in the gold standard dataset, which should all be excluded
     # from model training and validation
-    image_ids_to_avoid = get_images_to_avoid()
+    
 
     create_new_csv_files(csv_files_dict, image_ids_to_avoid)
 
