@@ -1,5 +1,4 @@
-from dataset.data import get_transforms, get_datasets_as_df, get_datasets, CustomCollator
-from dataset.object_dataset import ObjectSet
+from dataset.data import get_transforms, CustomCollator
 from dataset.det_text_dataset import DetTextSet
 from dataset.tokenizer import get_tokenized_datasets, get_tokenizer
 from datasets import load_from_disk
@@ -28,31 +27,31 @@ val_dataset = DetTextSet("val", tokenized_val, val_transforms)
 test_dataset=DetTextSet("test", tokenized_val, val_transforms)
 # train_dataset = ObjectSet(datasets_as_df["train"], train_transforms)
 # ret=train_dataset.__getitem__(index=10)
-print("hi")
 
 
+batchsize=64
 train_loader = DataLoader(
         train_dataset,
         collate_fn=CustomCollator(tokenizer=tokenizer, is_val=False),
-        batch_size=64,
+        batch_size=batchsize,
         shuffle=False,
-        num_workers=2,
+        num_workers=1,
         pin_memory=True,
     )
 val_loader = DataLoader(
         val_dataset,
         collate_fn=CustomCollator(tokenizer=tokenizer, is_val=True),
-        batch_size=32,
+        batch_size=batchsize,
         shuffle=False,
-        num_workers=2,
+        num_workers=1,
         pin_memory=True,
     )
 test_loader = DataLoader(
         test_dataset,
         collate_fn=CustomCollator(tokenizer=tokenizer, is_val=True),
-        batch_size=32,
+        batch_size=batchsize,
         shuffle=False,
-        num_workers=2,
+        num_workers=1,
         pin_memory=True,
     )
 for i,elem in enumerate(tqdm(train_loader)):
