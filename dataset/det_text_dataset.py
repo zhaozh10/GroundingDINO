@@ -6,12 +6,12 @@ import json
 import os
 
 class DetTextSet(Dataset):
-    def __init__(self, dataset_name: str, tokenized_dataset, transforms, log):
+    def __init__(self, dataset_name: str, tokenized_dataset, transforms):
         super().__init__()
         self.dataset_name = dataset_name
         self.tokenized_dataset = tokenized_dataset
         self.transforms = transforms
-        self.log = log
+        # self.log = log
         self.cxr_wh=json.load(open('../data/mimic-cxr-reports/cxr_wh.json'))
 
     def __len__(self):
@@ -40,7 +40,7 @@ class DetTextSet(Dataset):
 
             if image_path is None or not os.path.isfile(image_path):
                 # only used for local machine debugging (The MIMIC-CXR dataset has a size exceeding 500 GB)
-                print("[WARNING] Pseudo CXR now")
+                # print("[WARNING] Pseudo CXR now")
                 width, height=self.cxr_wh[image_path]['width'],self.cxr_wh[image_path]['height']
                 image = np.random.randint(0, 256, size=(height, width), dtype=np.uint8)
             else:
@@ -71,8 +71,10 @@ class DetTextSet(Dataset):
                 sample["reference_report"] = reference_report
 
         except Exception as e:
-            self.log.error(f"__getitem__ failed for: {image_path}")
-            self.log.error(f"Reason: {e}")
+            print(f"__getitem__ failed for: {image_path}")
+            print(f"Reason: {e}")
+            # self.log.error(f"__getitem__ failed for: {image_path}")
+            # self.log.error(f"Reason: {e}")
             return None
 
         return sample
