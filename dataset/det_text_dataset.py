@@ -58,7 +58,9 @@ class DetTextSet(Dataset):
 
             sample = {
                 "image": transformed_image,
+                # "raw_image":image,
                 "bbox_coordinates": torch.tensor(transformed_bbox_coordinates, dtype=torch.float),
+                # "raw_bbox_coordinates": torch.tensor(bbox_coordinates, dtype=torch.float),
                 "bbox_labels": torch.tensor(transformed_bbox_labels, dtype=torch.int64),
                 "input_ids": input_ids,
                 "attention_mask": attention_mask,

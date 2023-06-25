@@ -96,6 +96,7 @@ def get_datasets(path_full_dataset):
     PERCENTAGE_OF_TRAIN = 1.0
     PERCENTAGE_OF_VAL= 1.0
     usecols = [
+        'image_id',
         "mimic_image_file_path",
         "bbox_coordinates",
         "bbox_labels",
@@ -146,6 +147,7 @@ def get_datasets(path_full_dataset):
 
 def get_testset(path_full_dataset):
     usecols = [
+        "image_id",
         "mimic_image_file_path",
         "bbox_coordinates",
         "bbox_labels",
@@ -184,7 +186,9 @@ class CustomCollator:
         """
         batch is a list of dicts where each dict corresponds to a single image and has the keys:
           - image
+        #   - raw_image
           - bbox_coordinates
+        #   - raw_bbox_coordinates
           - bbox_labels
           - input_ids
           - attention_mask
@@ -226,6 +230,7 @@ class CustomCollator:
 
             # remove bbox_coordinates and bbox_labels and store them in list image_targets
             boxes = sample_dict.pop("bbox_coordinates")
+            # raw_boxes=sample_dict.pop("raw_bbox_coordinates")
             labels = sample_dict.pop("bbox_labels")
             image_targets.append({"boxes": boxes, "labels": labels})
 

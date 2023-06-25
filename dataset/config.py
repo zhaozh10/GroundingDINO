@@ -29,7 +29,37 @@ ANATOMICAL_REGIONS = {
     "carina": 27,
     "abdomen": 28
 }
-
+ANATOMICAL_DICT = {
+    1:"right lung",
+    2:"right upper lung zone",
+    3:"right mid lung zone",
+    4:"right lower lung zone",
+    5:"right hilar structures",
+    6:"right apical zone",
+    7:"right costophrenic angle",
+    8:"right hemidiaphragm",
+    9:"left lung",
+    10:"left upper lung zone",
+    11:"left mid lung zone",
+    12:"left lower lung zone",
+    13:"left hilar structures",
+    14:"left apical zone",
+    15:"left costophrenic angle",
+    16:"left hemidiaphragm",
+    17:"trachea",
+    18:"spine",
+    19:"right clavicle",
+    20:"left clavicle",
+    21:"aortic arch",
+    22:"mediastinum",
+    23:"upper mediastinum",
+    24:"svc",
+    25:"cardiac silhouette",
+    26:"cavoatrial junction",
+    27:"right atrium",
+    28:"carina",
+    29:"abdomen"
+}
 
 IMAGE_IDS_TO_IGNORE = {
     "0518c887-b80608ca-830de2d5-89acf0e2-bd3ec900",
