@@ -1,24 +1,30 @@
-import albumentations as A
+from copy import deepcopy
+import json
+from tqdm import tqdm
+from copy import deepcopy
 
-# 定义第一种分辨率的 Resize 变换
-resize_512 = A.Resize(512, 512)
+# data=json.load(open('./train_cxr_object_coco.json'))
+# # ann=info['annotations']
 
-# 定义第二种分辨率的 Resize 变换
-resize_1024 = A.Resize(1024, 1024)
+# # data=deepcopy(info)
+# for i, elem in enumerate(tqdm(data['annotations'])):
+#     elem['iscrowd']=0
+#     elem['area']=elem['bbox'][2]*elem['bbox'][3]
 
-# 定义一系列共享的增强变换
-shared_transforms = A.Compose([
-    # 在这里添加你的其他变换
-    A.HorizontalFlip(p=0.5),
-    A.Rotate(limit=30, p=0.5),
-    # ...
-])
+# # info=deepcopy(data)
+# with open('./train_cxr_object_coco.json','w')as f:
+#     json.dump(data,f,indent=4)
+# print("hold")
 
-# 定义 transform，根据需要选择不同的 Resize 变换
-transform = A.Compose([
-    A.OneOf([
-        resize_512,
-        resize_1024,
-    ]),
-    shared_transforms,
-])
+data=json.load(open('./train_cxr_object_coco.json'))
+# ann=info['annotations']
+
+# data=deepcopy(info)
+for i, elem in enumerate(tqdm(data['annotations'])):
+    elem['iscrowd']=0
+    elem['area']=elem['bbox'][2]*elem['bbox'][3]
+
+# info=deepcopy(data)
+with open('./train_cxr_object_coco.json','w')as f:
+    json.dump(data,f,indent=4)
+print("hold")
